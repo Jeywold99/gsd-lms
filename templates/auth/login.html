@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="form-card">
+  <span class="eyebrow">Students only</span>
+  <h1 style="margin-top:12px;">Log in.<br><span style="color:var(--orange);">Get moving.</span></h1>
+  <p class="lead">This is the GSD HQ course area. Accounts are invite-only — no account, no entry.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <p>
+      <label for="id_username">Username</label>
+      {{ form.username }}
+    </p>
+    <p>
+      <label for="id_password">Password</label>
+      {{ form.password }}
+    </p>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn--primary" style="width:100%;">Log in →</button>
+  </form>
+  <div class="form-links">
+    <a href="{% url 'password_reset' %}">Forgot your password?</a><br>
+    Got an invite code? <a href="{% url 'invite_signup' %}">Activate your account</a>
+  </div>
+</div>
+{% endblock %}

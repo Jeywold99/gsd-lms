@@ -1,0 +1,24 @@
+# GSD HQ LMS — drop-in for OpenMediaVault Compose on the Raspberry Pi 4B.
+#
+# 1. Copy this folder to the Pi (or point OMV Compose at the repo).
+# 2. Create .env next to this file (see .env.example).
+# 3. Change the volume path below to a folder on the external drive.
+# 4. Point the Cloudflare Tunnel at http://localhost:8087
+services:
+  gsd-lms:
+    build: .
+    container_name: gsd-lms
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8087:8000"
+    volumes:
+      # LEFT SIDE: change to your external-drive path in OMV, e.g.
+      # /srv/dev-disk-by-uuid-XXXX/gsd-lms-data
+      - ./data:/data
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

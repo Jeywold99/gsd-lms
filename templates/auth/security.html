@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Account security{% endblock %}
+{% block content %}
+<div class="form-card" style="max-width:520px;">
+  <span class="eyebrow">Account</span>
+  <h1 style="margin-top:12px;">Security.</h1>
+  <p class="lead">Signed in as <strong>{{ user.username }}</strong>{% if user.email %} · {{ user.email }}{% endif %}</p>
+
+  <h3 style="margin:8px 0 6px;">Two-factor authentication</h3>
+  {% if device %}
+    <p style="color:var(--green);font-weight:700;">✓ 2FA is ON for this account.</p>
+    <form method="post" action="{% url 'disable_2fa' %}" onsubmit="return confirm('Turn off two-factor authentication?');">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--ghost">Turn off 2FA</button>
+    </form>
+  {% else %}
+    <p style="color:var(--ink-60);font-size:14.5px;">Optional, but smart: add a 6-digit code from an authenticator app (Google Authenticator, Authy, 1Password…) on top of your password.</p>
+    <a class="btn btn--primary" href="{% url 'enable_2fa' %}">Turn on 2FA →</a>
+  {% endif %}
+
+  <h3 style="margin:26px 0 6px;">Password</h3>
+  <a class="btn btn--ghost" href="{% url 'password_reset' %}">Reset my password</a>
+
+  <div class="form-links"><a href="{% url 'dashboard' %}">← Back to my courses</a></div>
+</div>
+{% endblock %}

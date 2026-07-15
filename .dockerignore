@@ -1,0 +1,15 @@
+.venv
+data
+staticfiles
+.env
+.claude
+__pycache__
+*.pyc
+.git
+*.md
+AI-Strategist-Masterclass-Instructors-Textbook.pdf
+Day1-Teaching-Mastery-Sheet.pdf
+Day2-Teaching-Mastery-Sheet.pdf
+Day3-Teaching-Mastery-Sheet.pdf
+Day4-Teaching-Mastery-Sheet.pdf
+Day5-Teaching-Mastery-Sheet.pdf

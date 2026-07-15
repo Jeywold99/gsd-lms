@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="ghost">SOON</div>
+  <div class="wrap">
+    <span class="eyebrow eyebrow--on-dark">Coming soon</span>
+    <h1 style="margin-top:16px;">{{ course.title }}</h1>
+    <p class="sub">{{ course.tagline }} You're enrolled — we'll let you know the moment it drops.</p>
+    <p style="margin-top:22px;"><a class="btn btn--ghost btn--on-dark" href="{% url 'dashboard' %}">← Back to my courses</a></p>
+  </div>
+</section>
+{% endblock %}

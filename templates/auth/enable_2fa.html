@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Enable 2FA{% endblock %}
+{% block content %}
+<div class="form-card" style="max-width:520px;">
+  <span class="eyebrow">Security</span>
+  <h1 style="margin-top:12px;">Set up 2FA.</h1>
+  <p class="lead">1 · Scan this QR code with your authenticator app.<br>2 · Enter the 6-digit code it shows to confirm.</p>
+  <div class="qr-box">
+    <img src="data:image/svg+xml;base64,{{ qr_svg }}" alt="Scan this QR code with your authenticator app">
+  </div>
+  <p style="font-size:12.5px;color:var(--ink-40);margin-top:10px;">Can't scan? Add the key manually: <code style="word-break:break-all;">{{ device.bin_key.hex }}</code></p>
+  <form method="post" style="margin-top:14px;">
+    {% csrf_token %}
+    {{ form.token.errors }}
+    <p>
+      <label for="id_token">6-digit code</label>
+      {{ form.token }}
+    </p>
+    <button type="submit" class="btn btn--primary" style="width:100%;">Confirm &amp; turn on →</button>
+  </form>
+  <div class="form-links"><a href="{% url 'security' %}">← Back to security</a></div>
+</div>
+{% endblock %}

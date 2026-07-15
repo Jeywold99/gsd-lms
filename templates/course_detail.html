@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="ghost">5 DAYS</div>
+  <div class="wrap">
+    <span class="eyebrow eyebrow--on-dark">Your game plan</span>
+    <h1 style="margin-top:16px;">{{ course.title }}</h1>
+    <p class="sub">{{ course.tagline }}</p>
+    <div class="progress" style="max-width:420px;">
+      <div class="progress__track" style="background:rgba(255,255,255,0.15);"><div class="progress__fill" style="width:{{ percent }}%"></div></div>
+      <div class="progress__label" style="color:rgba(255,255,255,0.7);">{{ done }} / {{ rows|length }} lessons complete · {{ percent }}%</div>
+    </div>
+    {% if next_row %}
+      <p style="margin-top:22px;"><a class="btn btn--primary" href="{{ next_row.lesson.get_absolute_url }}">Continue → {{ next_row.lesson.title|truncatechars:48 }}</a></p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="ghost">LESSONS</div>
+  <div class="wrap">
+    <h2 style="font-size:44px;">Lessons</h2>
+    <p style="color:var(--ink-60);max-width:640px;">Each day unlocks when your previous worksheet is approved. Do the work — the gate is the point.</p>
+    {% for r in rows %}
+      {% if r.status == "locked" %}
+        <div class="lesson-row lesson-row--locked">
+          <div class="no">{{ r.lesson.order|stringformat:"02d" }}</div>
+          <div class="grow">
+            <div class="title">{{ r.lesson.title }}</div>
+            <div class="meta">
+              {% if not r.lesson.is_released %}
+                Drops {{ r.lesson.release_date|date:"M j, Y · g:i A" }}
+              {% else %}
+                Locked — complete the previous worksheet to open this one.
+              {% endif %}
+            </div>
+          </div>
+          <span class="badge badge--locked">Locked</span>
+        </div>
+      {% else %}
+        <a class="lesson-row" href="{{ r.lesson.get_absolute_url }}">
+          <div class="no">{{ r.lesson.order|stringformat:"02d" }}</div>
+          <div class="grow">
+            <div class="title">{{ r.lesson.title }}</div>
+            <div class="meta">
+              {% if r.status == "completed" %}Worksheet approved — done and dusted.
+              {% elif r.status == "in_progress" %}Worksheet submitted — review in progress.
+              {% elif r.submission and r.submission.status == "rejected" %}Worksheet needs another pass — see feedback inside.
+              {% else %}Open — watch, build, upload the worksheet.{% endif %}
+            </div>
+          </div>
+          {% if r.status == "completed" %}<span class="badge badge--done">Completed</span>
+          {% elif r.status == "in_progress" %}<span class="badge badge--progress">In review</span>
+          {% else %}<span class="badge badge--open">Open</span>{% endif %}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}My courses{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="ghost">EXECUTE</div>
+  <div class="wrap">
+    <span class="eyebrow eyebrow--on-dark">Mission Control</span>
+    <h1 style="margin-top:16px;">Welcome back,<br><span class="accent">{{ user.first_name|default:user.username }}.</span></h1>
+    <p class="sub">Less consuming, more executing. Pick up where you left off — every lesson ends in action.</p>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>AI Automations</span><span class="sep">✦</span>
+    <span>Claude Agents</span><span class="sep">✦</span>
+    <span>Prompt Libraries</span><span class="sep">✦</span>
+    <span>Premium Pricing</span><span class="sep">✦</span>
+    <span>Show Up &amp; Ship</span><span class="sep">✦</span>
+    <span>AI Automations</span><span class="sep">✦</span>
+    <span>Claude Agents</span><span class="sep">✦</span>
+    <span>Prompt Libraries</span><span class="sep">✦</span>
+    <span>Premium Pricing</span><span class="sep">✦</span>
+    <span>Show Up &amp; Ship</span><span class="sep">✦</span>
+  </div>
+</div>
+
+<section class="section">
+  <div class="ghost">COURSES</div>
+  <div class="wrap">
+    <h2 style="font-size:44px;">Your courses</h2>
+    {% if cards %}
+      <div class="course-grid">
+        {% for c in cards %}
+          {% if c.course.is_live %}
+            <a class="card" href="{{ c.course.get_absolute_url }}">
+              <span class="badge badge--live">Live</span>
+              <h3 class="display" style="margin-top:14px;">{{ c.course.title }}</h3>
+              <p class="tagline">{{ c.course.tagline }}</p>
+              <div class="progress">
+                <div class="progress__track"><div class="progress__fill" style="width:{{ c.percent }}%"></div></div>
+                <div class="progress__label">{{ c.done }} / {{ c.total }} lessons complete · {{ c.percent }}%</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card card--soon">
+              <span class="badge badge--soon">Coming soon</span>
+              <h3 class="display" style="margin-top:14px;">{{ c.course.title }}</h3>
+              <p class="tagline">{{ c.course.tagline }}</p>
+              <div class="progress"><div class="progress__label">Content dropping soon — you're already enrolled.</div></div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card" style="margin-top:26px;max-width:560px;">
+        <h3 class="display">No courses yet</h3>
+        <p class="tagline">Your account isn't enrolled in a course yet. If that doesn't sound right, reach out to the GSD team.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+# Python / Django
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Runtime data — the DB and student uploads live on the mounted volume
+data/
+staticfiles/
+
+# Secrets — create .env directly on the server, never commit it
+.env
+
+# Internal instructor materials — must never leave the team / reach students
+AI-Strategist-Masterclass-Instructors-Textbook.pdf
+Day1-Teaching-Mastery-Sheet.pdf
+Day2-Teaching-Mastery-Sheet.pdf
+Day3-Teaching-Mastery-Sheet.pdf
+Day4-Teaching-Mastery-Sheet.pdf
+Day5-Teaching-Mastery-Sheet.pdf
+
+# Local editor / preview config
+.claude/

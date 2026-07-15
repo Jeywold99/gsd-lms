@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block content %}
+<section class="hero" style="padding:44px 0 40px;">
+  <div class="ghost">DAY {{ lesson.order }}</div>
+  <div class="wrap">
+    <span class="eyebrow eyebrow--on-dark">{{ course.title }} · Lesson {{ lesson.order }} of {{ rows|length }}</span>
+    <h1 style="margin-top:16px;font-size:clamp(36px,5vw,60px);">{{ lesson.title }}</h1>
+  </div>
+</section>
+
+<section class="section" style="padding-top:36px;">
+  <div class="ghost">BUILD</div>
+  <div class="wrap">
+
+    <div class="video-frame">
+      {% if lesson.embed_url %}
+        <iframe src="{{ lesson.embed_url }}" title="{{ lesson.title }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      {% else %}
+        <div class="placeholder">
+          <div class="big">Video dropping soon</div>
+          <div>The replay for this session hasn't been posted yet — the written lesson below has everything you need to build.</div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if lesson.objective_list %}
+      <div class="objectives">
+        <div class="head">Tonight you will</div>
+        <ul>
+          {% for obj in lesson.objective_list %}<li>{{ obj }}</li>{% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="lesson-body">
+      {{ lesson.content|safe }}
+    </div>
+
+    {# -------------------------------------------------- worksheet download #}
+    {% if lesson.worksheet_file %}
+      <div class="panel panel--orange">
+        <h3 class="display">Step 1 — Grab the worksheet</h3>
+        <p style="margin:8px 0 18px;color:rgba(255,255,255,0.9);">Download it, do the work, save it as a PDF. No worksheet, no unlock — the gate is the point.</p>
+        <a class="btn btn--primary" href="{% url 'worksheet_download' course.slug lesson.slug %}">Download worksheet (PDF) ↓</a>
+      </div>
+    {% endif %}
+
+    {# -------------------------------------------------- submission / status #}
+    <div class="panel">
+      <h3 class="display">Step 2 — Upload your completed worksheet</h3>
+
+      {% if status == "completed" %}
+        <div class="status-note status-note--approved">✓ Approved{% if submission.reviewed_at %} on {{ submission.reviewed_at|date:"M j, Y" }}{% endif %} —
+          {% if next_lesson %}the next lesson is open. Keep moving.{% else %}that's the full course. Go get sh*t done.{% endif %}</div>
+        {% if submission.feedback %}<p style="margin-top:12px;"><strong>Coach's feedback:</strong> {{ submission.feedback }}</p>{% endif %}
+        {% if next_lesson %}<p style="margin-top:16px;"><a class="btn btn--primary" href="{{ next_lesson.get_absolute_url }}">Next lesson →</a></p>{% endif %}
+
+      {% elif status == "in_progress" %}
+        <div class="status-note status-note--review">⏳ Submitted {{ submission.submitted_at|date:"M j · g:i A" }} — review in progress. The next lesson unlocks the moment it's approved.</div>
+        <p style="margin-top:10px;font-size:14px;color:var(--ink-60);">Uploaded: <a href="{% url 'submission_download' submission.pk %}">your file</a></p>
+
+      {% else %}
+        {% if submission and submission.status == "rejected" %}
+          <div class="status-note status-note--rejected">↻ Needs another pass.
+            {% if submission.feedback %}Coach's feedback: {{ submission.feedback }}{% else %}Give it one more round and resubmit.{% endif %}</div>
+        {% endif %}
+        <p style="color:var(--ink-60);margin:10px 0 16px;">PDF, image, or Word doc · max {{ max_mb }} MB. An admin reviews it and the next lesson unlocks on approval.</p>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.uploaded_file.errors }}
+          <p>{{ form.uploaded_file }}</p>
+          <button type="submit" class="btn btn--primary" style="margin-top:14px;">Submit worksheet →</button>
+        </form>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:14px;margin-top:34px;flex-wrap:wrap;">
+      <div>
+        {% if prev_lesson %}<a class="btn btn--ghost" href="{{ prev_lesson.get_absolute_url }}">← Previous</a>{% endif %}
+      </div>
+      <div style="display:flex;gap:12px;">
+        <a class="btn btn--ghost" href="{{ course.get_absolute_url }}">All lessons</a>
+        {% if next_lesson and status == "completed" %}<a class="btn btn--primary" href="{{ next_lesson.get_absolute_url }}">Next →</a>{% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

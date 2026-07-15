@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Two-factor check{% endblock %}
+{% block content %}
+<div class="form-card">
+  <span class="eyebrow">Security check</span>
+  <h1 style="margin-top:12px;">One more step.</h1>
+  <p class="lead">Enter the 6-digit code from your authenticator app.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.token.errors }}
+    <p>
+      <label for="id_token">6-digit code</label>
+      {{ form.token }}
+    </p>
+    <button type="submit" class="btn btn--primary" style="width:100%;">Verify →</button>
+  </form>
+</div>
+{% endblock %}
