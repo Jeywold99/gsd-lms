@@ -8,6 +8,8 @@ See .env.example / README for the full list.
 import os
 from pathlib import Path
 
+from django.templatetags.static import static
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -33,6 +35,10 @@ DATA_DIR = Path(os.environ.get("DATA_DIR", BASE_DIR / "data"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 INSTALLED_APPS = [
+    # django-unfold (modern admin theme) must come before contrib.admin
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -151,3 +157,40 @@ if not DEBUG:
     SECURE_REFERRER_POLICY = "same-origin"
 
 OTP_TOTP_ISSUER = "GSD HQ"
+
+# ---------------------------------------------------------------------------
+# django-unfold — modern admin theme, styled to the GSD brand.
+# ---------------------------------------------------------------------------
+UNFOLD = {
+    "SITE_TITLE": "GSD HQ Admin",
+    "SITE_HEADER": "GSD HQ",
+    "SITE_SUBHEADER": "Mission Control",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "school",  # Material icon shown when no logo fits
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "SITE_LOGO": {
+        "light": lambda request: static("img/logo.png"),
+        "dark": lambda request: static("img/logo.png"),
+    },
+    "COLORS": {
+        # GSD Orange (#FF5C00) as the primary accent, full 50–950 scale.
+        "primary": {
+            "50": "255 241 230",
+            "100": "255 226 204",
+            "200": "255 197 153",
+            "300": "255 168 102",
+            "400": "255 130 51",
+            "500": "255 92 0",
+            "600": "230 82 0",
+            "700": "191 69 0",
+            "800": "153 55 0",
+            "900": "122 44 0",
+            "950": "71 26 0",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    },
+}

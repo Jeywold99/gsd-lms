@@ -1,8 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.admin import GroupAdmin as DjangoGroupAdmin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin as UnfoldModelAdmin
+from unfold.admin import TabularInline as UnfoldTabularInline
 
 from .models import Course, Enrollment, InviteCode, Lesson, Submission, User
 
@@ -10,15 +14,23 @@ admin.site.site_header = "GSD HQ · Mission Control"
 admin.site.site_title = "GSD HQ Admin"
 admin.site.index_title = "Manage students, courses & submissions"
 
+# Re-register Django's built-in Group with the unfold theme so it matches.
+admin.site.unregister(Group)
 
-class EnrollmentInline(admin.TabularInline):
+
+@admin.register(Group)
+class GroupAdmin(DjangoGroupAdmin, UnfoldModelAdmin):
+    pass
+
+
+class EnrollmentInline(UnfoldTabularInline):
     model = Enrollment
     extra = 0
     autocomplete_fields = ["course"]
 
 
 @admin.register(User)
-class UserAdmin(DjangoUserAdmin):
+class UserAdmin(DjangoUserAdmin, UnfoldModelAdmin):
     inlines = [EnrollmentInline]
     list_display = ["username", "first_name", "last_name", "email", "role", "is_active", "date_joined"]
     list_filter = ["is_staff", "is_active", "enrollments__course"]
@@ -29,7 +41,7 @@ class UserAdmin(DjangoUserAdmin):
         return "Admin" if obj.is_staff else "Student"
 
 
-class LessonInline(admin.TabularInline):
+class LessonInline(UnfoldTabularInline):
     model = Lesson
     extra = 0
     fields = ["order", "title", "slug", "video_url", "worksheet_file", "prerequisite", "release_date"]
@@ -38,7 +50,7 @@ class LessonInline(admin.TabularInline):
 
 
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(UnfoldModelAdmin):
     list_display = ["title", "status", "order", "lesson_count", "student_count"]
     list_filter = ["status"]
     search_fields = ["title"]
@@ -55,7 +67,7 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Lesson)
-class LessonAdmin(admin.ModelAdmin):
+class LessonAdmin(UnfoldModelAdmin):
     list_display = ["__str__", "course", "order", "has_video", "has_worksheet", "release_date"]
     list_filter = ["course"]
     search_fields = ["title"]
@@ -72,7 +84,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 
 @admin.register(Enrollment)
-class EnrollmentAdmin(admin.ModelAdmin):
+class EnrollmentAdmin(UnfoldModelAdmin):
     list_display = ["user", "course", "enrolled_at"]
     list_filter = ["course"]
     search_fields = ["user__username", "user__email"]
@@ -80,7 +92,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Submission)
-class SubmissionAdmin(admin.ModelAdmin):
+class SubmissionAdmin(UnfoldModelAdmin):
     list_display = ["user", "lesson", "status", "submitted_at", "reviewed_by", "file_link"]
     list_filter = ["status", "lesson__course"]
     search_fields = ["user__username", "user__email", "lesson__title"]
@@ -124,7 +136,7 @@ class SubmissionAdmin(admin.ModelAdmin):
 
 
 @admin.register(InviteCode)
-class InviteCodeAdmin(admin.ModelAdmin):
+class InviteCodeAdmin(UnfoldModelAdmin):
     list_display = ["code", "note", "course_list", "created_at", "expires_at", "status"]
     list_filter = ["courses"]
     search_fields = ["code", "note", "used_by__username"]
